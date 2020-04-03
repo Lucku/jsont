@@ -2,4 +2,8 @@ module github.com/lucku/jsont
 
 go 1.14
 
-require github.com/valyala/fastjson v1.5.0 // indirect
+require (
+	github.com/tidwall/gjson v1.6.0
+	github.com/tidwall/pretty v1.0.1 // indirect
+	github.com/valyala/fastjson v1.5.0
+)

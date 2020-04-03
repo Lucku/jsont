@@ -3,9 +3,12 @@ package main
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"os"
 
 	"github.com/lucku/jsont/cmd"
+	"github.com/lucku/jsont/transform"
+	"github.com/tidwall/gjson"
 )
 
 type runner interface {
@@ -44,8 +47,14 @@ func execute(args []string) error {
 }
 
 func main() {
-	if err := execute(os.Args[1:]); err != nil {
-		fmt.Println("Error:", err)
-		os.Exit(1)
+
+	bigFileData, _ := ioutil.ReadFile("reference-data/big.json")
+
+	parsed := gjson.ParseBytes(bigFileData)
+
+	j := transform.JSONIterator{Data: &parsed}
+
+	for j.Next() {
+		fmt.Println(j.Value().Path, j.Value().Value)
 	}
 }

@@ -3,8 +3,6 @@ package cmd
 import (
 	"errors"
 	"flag"
-
-	"github.com/lucku/jsont/transform"
 )
 
 type TransformCmd struct {
@@ -42,7 +40,7 @@ func (t *TransformCmd) Init(args []string) error {
 }
 
 func (t *TransformCmd) Run() error {
-	return transform.Transform(t.inFile, t.outFile, t.transFile)
+	return nil
 }
 
 func (t *TransformCmd) PrintUsage() {

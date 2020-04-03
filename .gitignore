@@ -5,6 +5,7 @@
 
 *.code-workspace
 bin
+.vscode
 
 # User-specific files
 *.rsuser
