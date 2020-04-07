@@ -6,6 +6,7 @@
 *.code-workspace
 bin
 .vscode
+*.out.json
 
 # User-specific files
 *.rsuser

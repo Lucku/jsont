@@ -7,9 +7,10 @@ import (
 )
 
 type JSONIterator struct {
-	Data    *json.Result
-	current *PathElem
-	done    bool
+	Data       *json.Result
+	OnlyLeaves bool
+	current    *PathElem
+	done       bool
 }
 
 type PathElem struct {

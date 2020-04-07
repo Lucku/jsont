@@ -3,12 +3,9 @@ package main
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/lucku/jsont/cmd"
-	"github.com/lucku/jsont/transform"
-	"github.com/tidwall/gjson"
 )
 
 type runner interface {
@@ -39,7 +36,11 @@ func execute(args []string) error {
 				return err
 			}
 
-			return cmd.Run()
+			if err := cmd.Run(); err != nil {
+				return fmt.Errorf("Error on execution of subcommand %s: %v", subcommand, err)
+			}
+
+			return nil
 		}
 	}
 
@@ -48,13 +49,7 @@ func execute(args []string) error {
 
 func main() {
 
-	bigFileData, _ := ioutil.ReadFile("reference-data/big.json")
-
-	parsed := gjson.ParseBytes(bigFileData)
-
-	j := transform.JSONIterator{Data: &parsed}
-
-	for j.Next() {
-		fmt.Println(j.Value().Path, j.Value().Value)
+	if err := execute(os.Args[1:]); err != nil {
+		fmt.Printf("%v\n", err)
 	}
 }

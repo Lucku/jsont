@@ -3,12 +3,17 @@ package cmd
 import (
 	"errors"
 	"flag"
+	"io/ioutil"
+	"path/filepath"
+	"strings"
+
+	"github.com/lucku/jsont/transform"
 )
 
 type TransformCmd struct {
 	fs        *flag.FlagSet
-	inFile    string
-	outFile   string
+	inFiles   []string
+	outDir    string
 	transFile string
 }
 
@@ -22,24 +27,46 @@ func (t *TransformCmd) Init(args []string) error {
 		return err
 	}
 
-	if t.outFile == "" {
-		return errors.New("No output file provided")
-	}
-
 	if t.transFile == "" {
 		return errors.New("No transformation file provided")
 	}
 
 	if t.fs.NArg() < 1 {
-		return errors.New("No input file provided")
+		return errors.New("No input file(s) provided")
 	}
 
-	t.inFile = t.fs.Args()[1]
+	t.inFiles = t.fs.Args()
 
 	return nil
 }
 
 func (t *TransformCmd) Run() error {
+
+	jt, err := transform.NewJSONTransformerWithFile(t.transFile, nil)
+
+	if err != nil {
+		return err
+	}
+
+	for _, f := range t.inFiles {
+
+		outData, err := jt.TransformWithFile(f)
+
+		if err != nil {
+			return err
+		}
+
+		fileName := filepath.Base(f)
+		dotTokens := strings.Split(fileName, ".")
+		outFileName := strings.Join(dotTokens[:len(dotTokens)-1], ".") + ".out." + dotTokens[len(dotTokens)-1]
+
+		outFile := filepath.Join(t.outDir, outFileName)
+
+		if err := ioutil.WriteFile(outFile, outData, 0644); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -53,7 +80,7 @@ func NewTransformCmd() *TransformCmd {
 		fs: flag.NewFlagSet("transform", flag.ContinueOnError),
 	}
 
-	tc.fs.StringVar(&tc.outFile, "o", "", "The file where output is written to (required)")
+	tc.fs.StringVar(&tc.outDir, "o", "", "The directory where output file are written to")
 	tc.fs.StringVar(&tc.transFile, "t", "", "Transformation file (required)")
 
 	return tc
