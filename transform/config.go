@@ -5,37 +5,46 @@ const (
 	_defValidate    = true
 )
 
-type Config struct {
+type Option interface {
+	apply(opts *options)
+}
+
+type options struct {
 	indexLeaves bool
 	validate    bool
 }
 
-type ConfigBuilder struct {
-	config *Config
+type (
+	indexLeavesOption bool
+	validateOption    bool
+)
+
+func (i indexLeavesOption) apply(opts *options) {
+	opts.indexLeaves = true
 }
 
-func NewConfig() *Config {
+func (v validateOption) apply(opts *options) {
+	opts.validate = true
+}
 
-	config := &Config{
+func WithIndexLeaves(i bool) Option {
+	return indexLeavesOption(i)
+}
+
+func WithValidate(v bool) Option {
+	return validateOption(v)
+}
+
+func newOptions(opts ...Option) options {
+
+	opt := options{
 		indexLeaves: _defIndexLeaves,
 		validate:    _defValidate,
 	}
 
-	return config
-}
+	for _, o := range opts {
+		o.apply(&opt)
+	}
 
-func NewConfigBuilder() *ConfigBuilder {
-	return &ConfigBuilder{config: NewConfig()}
-}
-
-func (c *ConfigBuilder) SetIndexLeaves(value bool) {
-	c.config.indexLeaves = value
-}
-
-func (c *ConfigBuilder) SetValidate(value bool) {
-	c.config.validate = true
-}
-
-func (c *ConfigBuilder) Build() *Config {
-	return c.config
+	return opt
 }

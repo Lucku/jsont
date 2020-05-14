@@ -5,10 +5,11 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
+	"runtime"
 
-	"github.com/magefile/mage/mg" // mg contains helpful utility functions, like Deps
+	"github.com/magefile/mage/mg"
+	"github.com/magefile/mage/sh"
 )
 
 // Default target to run when none is specified
@@ -21,26 +22,49 @@ var name = "jsont"
 func Build() error {
 	mg.Deps(InstallDeps)
 	fmt.Println("Building...")
-	cmd := exec.Command("go", "build", "-o", name, ".")
-	return cmd.Run()
+
+	filename := name
+
+	if runtime.GOOS == "windows" {
+		filename += ".exe"
+	}
+
+	return sh.RunV("go", "build", "-o", filename, ".")
 }
 
 // A custom install step if you need your bin someplace other than go/bin
 func Install() error {
-	mg.Deps(Build)
+	mg.Deps(Build, Test)
 	fmt.Println("Installing...")
-	return os.Rename(filepath.Join(".", name), filepath.Join("$GOBIN", name))
+
+	gobin, err := sh.Output("go", "env", "GOBIN")
+
+	if err != nil {
+		return fmt.Errorf("can't determine GOBIN: %v", err)
+	}
+
+	return os.Rename(filepath.Join(".", name), filepath.Join(gobin, name))
 }
 
 // Manage your deps, or running package managers.
 func InstallDeps() error {
 	fmt.Println("Installing Deps...")
-	cmd := exec.Command("go", "get", "-u", "./...")
-	return cmd.Run()
+	return sh.RunV("go", "get", "-u", "./...")
+}
+
+func Test() error {
+	fmt.Println("Running tests")
+	return sh.RunV("go", "test", "./...")
 }
 
 // Clean up after yourself
 func Clean() {
 	fmt.Println("Cleaning...")
 	os.RemoveAll(name)
+}
+
+// tag returns the git tag for the current branch or "" if none.
+func tag() string {
+	s, _ := sh.Output("git", "describe", "--tags")
+	return s
 }
