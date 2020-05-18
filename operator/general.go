@@ -1,4 +1,4 @@
-package operation
+package operator
 
 import (
 	"github.com/lucku/jsont/json"

@@ -6,7 +6,7 @@ import (
 	"go/token"
 
 	"github.com/lucku/jsont/json"
-	"github.com/lucku/jsont/operation"
+	"github.com/lucku/jsont/operator"
 	"github.com/tidwall/gjson"
 )
 
@@ -21,7 +21,7 @@ type expressionEvaluator struct {
 	qualifiers Stack
 }
 
-func newExpressionEvaluator(inputData gjson.Result) *expressionEvaluator {
+func newExpressionEvaluator(inputData gjson.Result) ExpressionEvaluator {
 	operands := newTypeSafeStack(0)
 	operators := newTypeSafeStack(0)
 	qualifiers := newTypeSafeStack(0)
@@ -109,18 +109,18 @@ func initScanner(in string) scanner.Scanner {
 }
 
 func isOperator(lit string) bool {
-	return operation.IsOperator(lit)
+	return operator.IsOperator(lit)
 }
 
-func (e *expressionEvaluator) evalAllLowerOperators(operator string) {
+func (e *expressionEvaluator) evalAllLowerOperators(op string) {
 
-	parsedOp := operation.GetOperator(operator)
+	parsedOp := operator.GetOperator(op)
 
 	for e.operators.Size() > 0 {
 
 		nextOp := e.operators.Peek().(string)
 
-		nextOpParsed := operation.GetOperator(nextOp)
+		nextOpParsed := operator.GetOperator(nextOp)
 
 		if nextOpParsed == nil {
 			break
@@ -133,7 +133,7 @@ func (e *expressionEvaluator) evalAllLowerOperators(operator string) {
 		e.evalOperation()
 	}
 
-	e.operators.Push(operator)
+	e.operators.Push(op)
 }
 
 func (e *expressionEvaluator) evalAllQualifiers() {
@@ -150,7 +150,7 @@ func (e *expressionEvaluator) evalOperation() error {
 
 	op := e.operators.Pop().(string)
 
-	parsedOp := operation.GetOperator(op)
+	parsedOp := operator.GetOperator(op)
 
 	args := make([]gjson.Result, len(parsedOp.ArgTypes))
 

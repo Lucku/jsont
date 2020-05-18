@@ -1,4 +1,4 @@
-package operation
+package operator
 
 import (
 	"github.com/lucku/jsont/json"
@@ -24,7 +24,7 @@ type Operator struct {
 	Apply      ApplierFunc
 }
 
-// OperandTypeError is an error that indicates a wrong type of input variable given into an operation
+// OperandTypeError is an error that indicates a wrong type of input variable given into an operator
 //
 // This error is caused by the user of the library and shall therefore be passed up to the CLI
 type OperandTypeError struct {

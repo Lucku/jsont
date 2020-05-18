@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/lucku/jsont/json"
+	"github.com/lucku/jsont/transform"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 )
@@ -65,7 +66,7 @@ func (j *JSONTransformer) Transform(inData []byte) ([]byte, error) {
 
 	it := json.NewIterator(&j.transformData)
 
-	evaluator := newExpressionEvaluator(input)
+	evaluator := transform.NewExpressionEvaluator(input)
 
 	opts := &sjson.Options{
 		Optimistic:     true,
