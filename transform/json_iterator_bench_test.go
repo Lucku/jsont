@@ -31,7 +31,7 @@ func benchmarkIterateJSONFile(b *testing.B, file string) {
 
 	data := gjson.ParseBytes(bytes)
 
-	j := JSONIterator{Data: &data}
+	j := jsonIterator{Data: &data}
 
 	b.StartTimer()
 	b.ReportAllocs()

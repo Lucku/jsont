@@ -20,6 +20,7 @@ var name = "jsont"
 
 // A build step that requires additional params, or platform specific steps for example
 func Build() error {
+
 	mg.Deps(InstallDeps)
 	fmt.Println("Building...")
 
@@ -29,7 +30,7 @@ func Build() error {
 		filename += ".exe"
 	}
 
-	return sh.RunV("go", "build", "-o", filename, ".")
+	return sh.RunV("go", "build", "-ldflags=\"-s -w\"", "-o", filename, ".")
 }
 
 // A custom install step if you need your bin someplace other than go/bin

@@ -6,11 +6,9 @@ import (
 	json "github.com/tidwall/gjson"
 )
 
-type JSONIterator struct {
-	Data       *json.Result
-	OnlyLeaves bool
-	current    *PathElem
-	done       bool
+type JSONIterator interface {
+	Next() bool
+	Value() *PathElem
 }
 
 type PathElem struct {
@@ -22,12 +20,19 @@ type PathElem struct {
 	Value  *json.Result
 }
 
+type jsonIterator struct {
+	Data       *json.Result
+	OnlyLeaves bool
+	current    *PathElem
+	done       bool
+}
+
 type kvPair struct {
 	k string
 	v json.Result
 }
 
-func (j *JSONIterator) Next() bool {
+func (j *jsonIterator) Next() bool {
 
 	if j.done {
 		return false
@@ -95,7 +100,7 @@ func mapToKVPairs(in map[string]json.Result) []*kvPair {
 	return out
 }
 
-func (j *JSONIterator) Value() *PathElem {
+func (j *jsonIterator) Value() *PathElem {
 	return j.current
 }
 

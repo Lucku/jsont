@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/lucku/jsont/operation"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 )
@@ -63,7 +62,9 @@ func (j *JSONTransformer) Transform(inData []byte) ([]byte, error) {
 	// Output data has the same structure as input data
 	var outData []byte = []byte(j.transformData.Raw)
 
-	it := JSONIterator{Data: &j.transformData}
+	it := jsonIterator{Data: &j.transformData}
+
+	evaluator := newExpressionEvaluator(input)
 
 	opts := &sjson.Options{
 		Optimistic:     true,
@@ -76,12 +77,10 @@ func (j *JSONTransformer) Transform(inData []byte) ([]byte, error) {
 
 		if cur.Value.Type == gjson.String {
 
-			//fmt.Println(string(outData))
-
-			result, err := processInstruction(&input, cur.Value.String())
+			result, err := evaluator.EvaluateExpression(cur.Value.String())
 
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("failed to process instruction '%s': %w", cur.Value.String(), err)
 			}
 
 			if outData, err = sjson.SetBytesOptions(outData, strings.Join(cur.Path, "."), result, opts); err != nil {
@@ -90,10 +89,6 @@ func (j *JSONTransformer) Transform(inData []byte) ([]byte, error) {
 		}
 
 	}
-
-	// if outFile == nil {
-	// 	// Write to std.out
-	// }
 
 	return outData, nil
 }
@@ -113,7 +108,7 @@ func doIndexLeaves(data gjson.Result) map[string]*gjson.Result {
 
 	leaves := make(map[string]*gjson.Result)
 
-	it := JSONIterator{Data: &data}
+	it := jsonIterator{Data: &data}
 
 	for it.Next() {
 		cur := it.Value()
@@ -129,63 +124,4 @@ func doIndexLeaves(data gjson.Result) map[string]*gjson.Result {
 
 func validateJSON(jsonData []byte) bool {
 	return gjson.ValidBytes(jsonData)
-}
-
-type command struct {
-	operation *operation.Operator
-	operands  []string
-}
-
-func processInstruction(input *gjson.Result, instr string) (interface{}, error) {
-
-	// parse the string into the operations and operands
-
-	parsedOperations := make([]command, 0)
-
-	_ = parsedOperations
-
-	//name.example + something.test
-
-	// expected:
-	// operation . : "name", "example"
-	// operation + : "name.example", "something.test"
-	// operation . : "something", "test"
-
-	// Iterate operations in reverse order of their precedence
-	for i := len(operation.Operators) - 1; i >= 0; i-- {
-
-		cmds := parseCommands(instr, operation.Operators[i])
-
-		_ = cmds
-	}
-
-	// implement a state machine
-
-	fmt.Println("Process", instr)
-
-	result := input.Get(instr)
-
-	// First step: Just act like there are no operators and simply resolve references
-
-	// make a copy of type of instr
-
-	return result.Value(), nil
-}
-
-func parseCommands(instructions string, operator *operation.Operator) []*command {
-
-	/*
-		split := strings.Split(instr, operations[i].OperatorSign())
-
-		for _, s := range split {
-
-			newCmd := command{operation: operations[i], operands: TODO}
-
-			parse
-
-			parsedOperations = append(parsedOperations, newOp)
-		}
-	*/
-
-	return nil
 }
