@@ -1,0 +1,20 @@
+{
+    "version": "1.0",
+    "flight": {
+        "arrivalAirport": "HAM",
+        "departureAirport": "DUS",
+        "economy": {
+            "seats": 150,
+            "wifi": true
+        },
+        "premiumEconomy": {
+            "seats": 100,
+            "wifi": true
+        },
+        "business": {
+            "seats": 10,
+            "wifi": true
+        },
+        "wideBody": true
+    }
+}

@@ -1,27 +1,27 @@
-package transform
+package json
 
 import (
 	"fmt"
 
-	json "github.com/tidwall/gjson"
+	"github.com/tidwall/gjson"
 )
 
-type JSONIterator interface {
+type Iterator interface {
 	Next() bool
 	Value() *PathElem
 }
 
 type PathElem struct {
 	curMap []*kvPair
-	curArr []json.Result
+	curArr []gjson.Result
 	index  int
 	parent *PathElem
 	Path   []string
-	Value  *json.Result
+	Value  *gjson.Result
 }
 
-type jsonIterator struct {
-	Data       *json.Result
+type iterator struct {
+	Data       *gjson.Result
 	OnlyLeaves bool
 	current    *PathElem
 	done       bool
@@ -29,10 +29,14 @@ type jsonIterator struct {
 
 type kvPair struct {
 	k string
-	v json.Result
+	v gjson.Result
 }
 
-func (j *jsonIterator) Next() bool {
+func NewIterator(data *gjson.Result) Iterator {
+	return &iterator{Data: data}
+}
+
+func (j *iterator) Next() bool {
 
 	if j.done {
 		return false
@@ -40,7 +44,7 @@ func (j *jsonIterator) Next() bool {
 
 	if j.current == nil {
 
-		if j.Data.Type != json.JSON {
+		if j.Data.Type != gjson.JSON {
 			return false
 		}
 
@@ -61,7 +65,7 @@ func (j *jsonIterator) Next() bool {
 
 	var nextPathElem *PathElem
 
-	if j.current.Value.Type == json.JSON {
+	if j.current.Value.Type == gjson.JSON {
 
 		if j.current.Value.IsObject() {
 			j.current.curMap = mapToKVPairs(j.current.Value.Map())
@@ -89,7 +93,7 @@ func (j *jsonIterator) Next() bool {
 }
 
 // This might be a little bit hacky, but needs to be done in order for the map to be ordered
-func mapToKVPairs(in map[string]json.Result) []*kvPair {
+func mapToKVPairs(in map[string]gjson.Result) []*kvPair {
 
 	out := make([]*kvPair, 0, len(in))
 
@@ -100,7 +104,7 @@ func mapToKVPairs(in map[string]json.Result) []*kvPair {
 	return out
 }
 
-func (j *jsonIterator) Value() *PathElem {
+func (j *iterator) Value() *PathElem {
 	return j.current
 }
 

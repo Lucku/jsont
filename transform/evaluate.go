@@ -5,6 +5,7 @@ import (
 	"go/scanner"
 	"go/token"
 
+	"github.com/lucku/jsont/json"
 	"github.com/lucku/jsont/operation"
 	"github.com/tidwall/gjson"
 )
@@ -80,9 +81,9 @@ Scan:
 		prev = tok
 	}
 
-	for e.operators.Size() > 0 {
+	e.evalAllQualifiers()
 
-		e.evalAllQualifiers()
+	for e.operators.Size() > 0 {
 
 		if err := e.evalOperation(); err != nil {
 			return nil, err
@@ -163,9 +164,8 @@ func (e *expressionEvaluator) evalOperation() error {
 
 		val := arg.(gjson.Result)
 
-		// check data types of operands
-		if exp := parsedOp.ArgTypes[i]; val.Type != exp && exp != operation.Any {
-			return fmt.Errorf("argument %v is not of expected type %v", val, exp)
+		if exp := parsedOp.ArgTypes[i]; !json.CheckType(val, exp) {
+			return fmt.Errorf("argument '%v' is not of expected type %v", val, exp)
 		}
 
 		args[i] = val

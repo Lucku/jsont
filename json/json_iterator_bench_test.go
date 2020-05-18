@@ -1,4 +1,4 @@
-package transform
+package json
 
 import (
 	"io/ioutil"
@@ -31,7 +31,7 @@ func benchmarkIterateJSONFile(b *testing.B, file string) {
 
 	data := gjson.ParseBytes(bytes)
 
-	j := jsonIterator{Data: &data}
+	j := iterator{Data: &data}
 
 	b.StartTimer()
 	b.ReportAllocs()

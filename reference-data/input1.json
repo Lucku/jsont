@@ -1,9 +1,0 @@
-{
-    "version": "1.0",
-    "flight": {
-        "arrivalAirport": "HAM",
-        "departureAirport": "DUS",
-        "seats": 120,
-        "wideBody": true
-    }
-}

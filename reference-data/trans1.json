@@ -1,5 +1,0 @@
-{
-    "from": "flight.departureAirport",
-    "to": "flight.arrivalAirport",
-    "passengers": "flight.seats"
-}

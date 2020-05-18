@@ -1,17 +1,9 @@
 package operation
 
 import (
-	"fmt"
-
+	"github.com/lucku/jsont/json"
 	"github.com/tidwall/gjson"
 )
-
-// Any represents any JSON type and can be used by operator definitions to declare that any kind of JSON
-// type is accepted as argument
-var Any gjson.Type = 6
-
-// Bool is the group of JSON types True and False
-var Bool gjson.Type = 7
 
 // ApplierFunc represents the function that is performed by an operator, taking a variable number of inputs
 // as gjson.Result and returning again a gjson.Result
@@ -28,7 +20,7 @@ type Operator struct {
 	Identifier string
 	Sign       string
 	Precedence int
-	ArgTypes   []gjson.Type
+	ArgTypes   []json.Type
 	Apply      ApplierFunc
 }
 
@@ -75,8 +67,21 @@ func GetOperator(literal string) *Operator {
 }
 
 func init() {
-	registerOperator(opConcat)
-	registerOperator(opAdd)
 
-	fmt.Println(Operators)
+	/* general operators */
+	registerOperator(opCompare)
+	registerOperator(opIfNull)
+
+	/* string operators */
+	registerOperator(opConcat)
+
+	/* boolean operators */
+	registerOperator(opAnd)
+	registerOperator(opOr)
+
+	/* arithmetic operators */
+	registerOperator(opAdd)
+	registerOperator(opSub)
+	registerOperator(opMultiply)
+	registerOperator(opDivide)
 }

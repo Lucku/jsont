@@ -42,7 +42,7 @@ func (t *TransformCmd) Init(args []string) error {
 
 func (t *TransformCmd) Run() error {
 
-	jt, err := transform.NewJSONTransformerWithFile(t.transFile, nil)
+	jt, err := transform.NewJSONTransformerWithFile(t.transFile)
 
 	if err != nil {
 		return err

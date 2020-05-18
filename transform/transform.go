@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"strings"
 
+	"github.com/lucku/jsont/json"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 )
@@ -62,7 +63,7 @@ func (j *JSONTransformer) Transform(inData []byte) ([]byte, error) {
 	// Output data has the same structure as input data
 	var outData []byte = []byte(j.transformData.Raw)
 
-	it := jsonIterator{Data: &j.transformData}
+	it := json.NewIterator(&j.transformData)
 
 	evaluator := newExpressionEvaluator(input)
 
@@ -83,7 +84,7 @@ func (j *JSONTransformer) Transform(inData []byte) ([]byte, error) {
 				return nil, fmt.Errorf("failed to process instruction '%s': %w", cur.Value.String(), err)
 			}
 
-			if outData, err = sjson.SetBytesOptions(outData, strings.Join(cur.Path, "."), result, opts); err != nil {
+			if outData, err = sjson.SetBytesOptions(outData, strings.Join(cur.Path, "."), result.Value(), opts); err != nil {
 				return nil, err
 			}
 		}
@@ -108,7 +109,7 @@ func doIndexLeaves(data gjson.Result) map[string]*gjson.Result {
 
 	leaves := make(map[string]*gjson.Result)
 
-	it := jsonIterator{Data: &data}
+	it := json.NewIterator(&data)
 
 	for it.Next() {
 		cur := it.Value()
