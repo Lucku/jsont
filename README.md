@@ -5,6 +5,9 @@ Transform JSON data using .. JSON
 
 A high performance Go library to transform JSON data using simple and easily understandable instructions written in JSON.
 
+The transformation is performed by providing a JSON of the desired structure, but having substitution statements as leaf-level values, provided as strings. They include selectors to the input JSON's fields and further allow for operations between various
+input fields. The value of an input JSON field could simply be put under a new key in the desired JSON, or even be part of an operation together with other input fields.
+
 ## Example
 
 Input:
@@ -70,7 +73,7 @@ $ go get github.com/magefile/mage
 $ mage install
 ```
 
-## Usage
+## Getting Started
 
 ### CLI
 
@@ -110,24 +113,24 @@ output:
 
 ## Operators
 
-- Arithmetic (number, number) -> number
-  - Add ("+")
-  - Subtract ("-")
-  - Multiply ("*")
-  - Divide ("/")
+- Arithmetic *(number, number) -> number*
+  - Add (`+`)
+  - Subtract (`-`)
+  - Multiply (`*`)
+  - Divide (`/`)
 
-- Boolean (bool, bool) -> bool
-  - And ("&")
-  - Or ("|")
+- Boolean *(bool, bool) -> bool*
+  - And (`&`)
+  - Or (`|`)
 
-- Strings (string, string) -> string
-  - Concatenate (":")
+- Strings *(string, string) -> string*
+  - Concatenate (`:`)
 
 - Others
-  - IfNull ("?") (any, any) -> any: If the first value happens to be null, use the second one
-    - Example: "{ "name": "aircraft.iata?aircraft.name" }" - if aircraft.iata is null, take aircraft.name instead
-  - Compare ("=") (any, any) -> bool: Returns true if the arguments are equal
-    - Example: "{ "equalNames": "family.father.name=family.firstSon.name" }"
+  - IfNull (`?`) *(any, any) -> any*: If the first value happens to be null, use the second one
+    - Example: `"{ "name": "aircraft.iata?aircraft.name" }"` - if aircraft.iata is null, take aircraft.name instead
+  - Compare (`=`) *(any, any) -> bool*: Returns true if the arguments are equal
+    - Example: `"{ "equalNames": "family.father.name=family.firstSon.name" }"`
 
 ## ToDos
 
