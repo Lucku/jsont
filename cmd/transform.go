@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"strings"
+
+	"github.com/lucku/jsont/transform"
 )
 
 type TransformCmd struct {
@@ -40,7 +42,7 @@ func (t *TransformCmd) Init(args []string) error {
 
 func (t *TransformCmd) Run() error {
 
-	jt, err := NewJSONTransformerWithFile(t.transFile)
+	jt, err := transform.NewJSONTransformerWithFile(t.transFile)
 
 	if err != nil {
 		return err

@@ -8,6 +8,12 @@ import (
 	"github.com/lucku/jsont/cmd"
 )
 
+var (
+	timestamp  string
+	version    string
+	commitHash string
+)
+
 type runner interface {
 	Init([]string) error
 	Run() error
@@ -48,7 +54,6 @@ func execute(args []string) error {
 }
 
 func main() {
-
 	if err := execute(os.Args[1:]); err != nil {
 		fmt.Printf("%v\n", err)
 	}

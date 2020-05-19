@@ -5,6 +5,7 @@
 
 *.code-workspace
 bin
+dist
 .vscode
 *.out.json
 

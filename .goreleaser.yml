@@ -1,0 +1,51 @@
+project_name: jsont
+
+release:
+  github:
+    owner: lucku
+    name: jsont
+  draft: true
+
+before:
+  hooks:
+    - go mod download
+
+build:
+  ldflags:
+    - -s -w
+    - -X github.com/lucku/jsont/timestamp={{.Date}}
+    - -X github.com/lucku/jsont/commitHash={{.Commit}}
+    - -X github.com/lucku/jsont/version={{.Version}}
+  env:
+    - CGO_ENABLED=0
+  goos:
+    - darwin
+    - linux
+    - windows
+  goarch:
+    - amd64
+    - arm64
+
+archives:
+  - replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      386: i386
+      amd64: x86_64
+    files:
+      - LICENSE
+      - README.md
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+checksum:
+  name_template: "{{.ProjectName}}_checksums.txt"
+snapshot:
+  name_template: "{{.Tag}}-SNAPSHOT"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^test:"
