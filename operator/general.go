@@ -5,11 +5,11 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-var opCompare = &Operator{
-	Identifier: "compare",
+var opEqual = &Operator{
+	Identifier: "equal",
 	ArgTypes:   []json.Type{json.Any, json.Any},
-	Sign:       "=",
-	Precedence: 1,
+	Sign:       "==",
+	Precedence: 3,
 	Apply: func(args ...gjson.Result) gjson.Result {
 
 		res := args[0] == args[1]
@@ -22,11 +22,28 @@ var opCompare = &Operator{
 	},
 }
 
+var opNotEqual = &Operator{
+	Identifier: "notEqual",
+	ArgTypes:   []json.Type{json.Any, json.Any},
+	Sign:       "!=",
+	Precedence: 3,
+	Apply: func(args ...gjson.Result) gjson.Result {
+
+		res := args[0] != args[1]
+
+		if res {
+			return gjson.Result{Type: gjson.True}
+		}
+
+		return gjson.Result{Type: gjson.False}
+	},
+}
+
 var opIfNull = &Operator{
-	Identifier: "ifnull",
+	Identifier: "ifNull",
 	ArgTypes:   []json.Type{json.Any, json.Any},
 	Sign:       "?",
-	Precedence: 3,
+	Precedence: 6,
 	Apply: func(args ...gjson.Result) gjson.Result {
 
 		if json.CheckType(args[0], json.Null) {

@@ -38,11 +38,14 @@ type OperandTypeError struct {
 // its sign
 var Operators = make(map[string]*Operator)
 
-func registerOperator(op *Operator) {
+func registerOperators(ops ...*Operator) {
 
-	if op != nil {
-		Operators[op.Sign] = op
+	for _, op := range ops {
+		if op != nil {
+			Operators[op.Sign] = op
+		}
 	}
+
 }
 
 // IsOperator checks if a given literal is associated with a registered operator and returns true is that is
@@ -69,19 +72,14 @@ func GetOperator(literal string) *Operator {
 func init() {
 
 	/* general operators */
-	registerOperator(opCompare)
-	registerOperator(opIfNull)
+	registerOperators(opEqual, opNotEqual, opIfNull)
 
 	/* string operators */
-	registerOperator(opConcat)
+	registerOperators(opConcat)
 
 	/* boolean operators */
-	registerOperator(opAnd)
-	registerOperator(opOr)
+	registerOperators(opAnd, opOr)
 
 	/* arithmetic operators */
-	registerOperator(opAdd)
-	registerOperator(opSub)
-	registerOperator(opMultiply)
-	registerOperator(opDivide)
+	registerOperators(opAdd, opSub, opMultiply, opDivide, opLess, opLessEqual, opGreater, opGreaterEqual)
 }

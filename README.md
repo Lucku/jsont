@@ -60,14 +60,14 @@ Output:
 Install using `go get`:
 
 ```
-$ go get github.com/lucku/jsont/...
+$ go get github.com/lucku/jsont
 ```
 
 ### Using magefile (recommended)
 
 Install using `mage` (see https://www.github.com/magefile/mage)
 
-```
+```bash
 $ git clone https://github.com/lucku/jsont
 $ go get github.com/magefile/mage
 $ mage install
@@ -79,7 +79,7 @@ $ mage install
 
 jsont offers a Command Line Interface (CLI) to be used handily from the shell.
 
-```
+```bash
 $ jsont transform -t testdata/trans1.json -o testdata testdata/input1.json
 ```
 
@@ -118,6 +118,12 @@ output:
   - Subtract (`-`)
   - Multiply (`*`)
   - Divide (`/`)
+  - Mod (`%`)
+  - Power (`^`)
+  - Greater (`>`)
+  - Greater Equal (`>=`)
+  - Less (`<`)
+  - Less Equal (`<=`)
 
 - Boolean *(bool, bool) -> bool*
   - And (`&`)
@@ -128,16 +134,21 @@ output:
 
 - Others
   - IfNull (`?`) *(any, any) -> any*: If the first value happens to be `null`, use the second one (as other operations, can be arbitrarily chained)
-    - Example: `"{ "name": "aircraft.iata?aircraft.name" }"` - if `aircraft.iata` is `null`, take `aircraft.name` instead
-  - Compare (`=`) *(any, any) -> bool*: Returns true if the arguments are equal
-    - Example: `"{ "equalNames": "family.father.name=family.firstSon.name" }"`
+    - Example: `"{ "name": "aircraft.iata ? aircraft.name" }"` - if `aircraft.iata` is `null`, take `aircraft.name` instead
+  - Equal (`==`) *(any, any) -> bool*: Returns true if the arguments are equal
+    - Example: `"{ "equalNames": "family.father.name == family.firstSon.name" }"`
+  - NotEqual (`!=`) *(any, any) -> bool*: Returns true if the arguments are not equal
+    - Example: `"{ "equalNames": "family.mother.numChildren != family.father.numChildren" }"`
 
 ## ToDos
 
 - [x] Extend the magefile to include version information in binary
 - [ ] Provide all GoDoc comments
 - [ ] Write a full-fledged CLI
+- [ ] Support for unary operators like negation
+- [ ] Support for same operator on different data types
 - [ ] Add more operators
 - [ ] Test cases
+- [ ] Provide support for functions and implement standard function
 - [ ] Completely own implementation of JSON parsing and queries
 - [ ] Access of array elements in selector
