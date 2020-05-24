@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go/scanner"
 	"go/token"
+	"strconv"
 
 	"github.com/lucku/jsont/json"
 	"github.com/lucku/jsont/operator"
@@ -28,11 +29,16 @@ func newExpressionEvaluator(inputData gjson.Result) ExpressionEvaluator {
 	return &expressionEvaluator{inputData: inputData, operands: operands, operators: operators, qualifiers: qualifiers}
 }
 
+const _qualifierIndicator = "$"
+
 func (e *expressionEvaluator) EvaluateExpression(expr string) (*gjson.Result, error) {
 
 	s := initScanner(expr)
 
-	prev := token.ILLEGAL
+	prevTok := token.ILLEGAL
+	prevLit := ""
+	readingQualifier := false
+	currentQualifier := ""
 
 Scan:
 	for {
@@ -43,17 +49,26 @@ Scan:
 		case tok == token.EOF:
 			break Scan
 		case isOperator(tok.String()):
+			if readingQualifier {
+				e.qualifiers.Push(currentQualifier)
+				currentQualifier = ""
+				readingQualifier = false
+			}
 			e.evalAllQualifiers()
 			e.evalAllLowerOperators(tok.String())
 		case tok == token.PERIOD:
 			// we have a select operation here: check if last token was an operand
-			if prev.IsOperator() || prev == token.ILLEGAL {
-				return nil, fmt.Errorf("not able to parse instruction: select (.) without preceding operand")
+			if !readingQualifier || prevTok == token.ILLEGAL {
+				return nil, fmt.Errorf("not able to parse instruction: path separator (.) without preceding qualifier")
 			}
 		case tok == token.LPAREN:
 			e.operators.Push(tok.String())
 		case tok == token.RPAREN:
-
+			if readingQualifier {
+				e.qualifiers.Push(currentQualifier)
+				currentQualifier = ""
+				readingQualifier = false
+			}
 			for e.operators.Size() > 0 && e.operators.Peek().(string) != "(" {
 				if err := e.evalOperation(); err != nil {
 					return nil, err
@@ -64,21 +79,37 @@ Scan:
 			if e.operators.Pop().(string) != "(" {
 				return nil, fmt.Errorf("no matching parenthesis found")
 			}
-
-		case tok == token.SEMICOLON:
-		default: //operand
-
-			if prev == token.PERIOD {
-				lastQualifier := e.qualifiers.Pop().(string)
-				lastQualifier += "."
-				lastQualifier += lit
-				e.qualifiers.Push(lastQualifier)
-			} else {
-				e.qualifiers.Push(lit)
+		case tok == token.FLOAT, tok == token.INT:
+			rawNum, _ := strconv.ParseFloat(lit, 64)
+			jsonNum := gjson.Result{Type: gjson.Number, Num: rawNum}
+			e.operands.Push(jsonNum)
+		case lit == "true" && !readingQualifier: // if not part of qualifier, this is a 'true' literal
+			jsonTrue := gjson.Result{Type: gjson.True}
+			e.operands.Push(jsonTrue)
+		case lit == "false" && !readingQualifier: // if not part of qualifier, this is a 'false' literal
+			jsonFalse := gjson.Result{Type: gjson.False}
+			e.operands.Push(jsonFalse)
+		case tok == token.SEMICOLON: // semicolon is automatically added at the end by the scanner, can be used to push last qualifier
+			if readingQualifier {
+				e.qualifiers.Push(currentQualifier)
 			}
+		case lit == _qualifierIndicator:
+			if readingQualifier {
+				return nil, fmt.Errorf("illegal \"$\" inside of qualifier")
+			}
+			readingQualifier = true
+		case prevLit == _qualifierIndicator, prevTok == token.PERIOD: // path segment of qualifier
+			if currentQualifier != "" {
+				currentQualifier += "."
+			}
+			currentQualifier += lit
+		default: // string literal
+			jsonString := gjson.Result{Type: gjson.String, Str: lit}
+			e.operands.Push(jsonString)
 		}
 
-		prev = tok
+		prevTok = tok
+		prevLit = lit
 	}
 
 	e.evalAllQualifiers()

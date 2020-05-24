@@ -32,17 +32,17 @@ type OperandTypeError struct {
 	expectedType gjson.Type
 }
 
-// Operators is a map of operators registered to be used by the JSON transforming logic
+// operators is a map of operators registered to be used by the JSON transforming logic
 //
 // The operator sign acts as the map key for an operator, making it easy to look up an operator by
 // its sign
-var Operators = make(map[string]*Operator)
+var operators = make(map[string]*Operator)
 
 func registerOperators(ops ...*Operator) {
 
 	for _, op := range ops {
 		if op != nil {
-			Operators[op.Sign] = op
+			operators[op.Sign] = op
 		}
 	}
 
@@ -52,7 +52,7 @@ func registerOperators(ops ...*Operator) {
 // the case
 func IsOperator(literal string) bool {
 
-	if _, ok := Operators[literal]; ok {
+	if _, ok := operators[literal]; ok {
 		return true
 	}
 
@@ -62,7 +62,7 @@ func IsOperator(literal string) bool {
 // GetOperator returns the operator for a given literal or nil if there is no registered operator with the given sign
 func GetOperator(literal string) *Operator {
 
-	if o, ok := Operators[literal]; ok {
+	if o, ok := operators[literal]; ok {
 		return o
 	}
 

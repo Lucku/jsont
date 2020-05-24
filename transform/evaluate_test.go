@@ -8,7 +8,7 @@ import (
 
 func TestEvalExpression(t *testing.T) {
 
-	expr := "select.example:(test.something:test.something)"
+	expr := "$select.example:($test.something:literal)"
 
 	input := gjson.Parse(`{"select":{"example":"test"},"test":{"something":"value"}}`)
 
