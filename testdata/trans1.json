@@ -1,6 +1,6 @@
 {
-    "from": "flight.departureAirport",
-    "to": "flight.arrivalAirport",
-    "passengers": "flight.economy.seats+flight.premiumEconomy.seats+flight.business.seats",
-    "allWifi": "flight.economy.wifi&flight.premiumEconomy.wifi&flight.business.wifi"
+    "from": "$flight.departureAirport",
+    "to": "$flight.arrivalAirport",
+    "passengers": "$flight.economy.seats + $flight.premiumEconomy.seats + $flight.business.seats",
+    "allWifi": "$flight.economy.wifi & $flight.premiumEconomy.wifi & $flight.business.wifi"
 }

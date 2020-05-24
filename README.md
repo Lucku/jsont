@@ -36,10 +36,10 @@ Input:
 Transformation description:
 ```json
 {
-    "from": "flight.departureAirport",
-    "to": "flight.arrivalAirport",
-    "passengers": "flight.economy.seats + flight.premiumEconomy.seats + flight.business.seats",
-    "allWifi": "flight.economy.wifi & flight.premiumEconomy.wifi & flight.business.wifi"
+    "from": "$flight.departureAirport",
+    "to": "$flight.arrivalAirport",
+    "passengers": "$flight.economy.seats + $flight.premiumEconomy.seats + $flight.business.seats",
+    "allWifi": "$flight.economy.wifi & $flight.premiumEconomy.wifi & $flight.business.wifi"
 }
 ```
 
@@ -134,11 +134,11 @@ output:
 
 - Others
   - IfNull (`?`) *(any, any) -> any*: If the first value happens to be `null`, use the second one (as other operations, can be arbitrarily chained)
-    - Example: `"{ "name": "aircraft.iata ? aircraft.name" }"` - if `aircraft.iata` is `null`, take `aircraft.name` instead
+    - Example: `"{ "name": "$aircraft.iata ? $aircraft.name" }"` - if `aircraft.iata` is `null`, take `aircraft.name` instead
   - Equal (`==`) *(any, any) -> bool*: Returns true if the arguments are equal
-    - Example: `"{ "equalNames": "family.father.name == family.firstSon.name" }"`
+    - Example: `"{ "equalNames": "family.father.name == Tom" }"`
   - NotEqual (`!=`) *(any, any) -> bool*: Returns true if the arguments are not equal
-    - Example: `"{ "equalNames": "family.mother.numChildren != family.father.numChildren" }"`
+    - Example: `"{ "equalNames": "$family.mother.numChildren != 3 }"`
 
 ## ToDos
 
