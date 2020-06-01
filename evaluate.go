@@ -44,7 +44,7 @@ Scan:
 	for {
 
 		_, tok, lit := s.Scan()
-		fmt.Println(tok, lit)
+
 		switch {
 		case tok == token.EOF:
 			break Scan
@@ -178,9 +178,6 @@ func (e *expressionEvaluator) evalQualifier(qualifier string) {
 }
 
 func (e *expressionEvaluator) evalOperation() error {
-
-	fmt.Println(e.operands)
-	fmt.Println(e.operators)
 
 	op := e.operators.Pop().(string)
 
