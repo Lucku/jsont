@@ -53,7 +53,7 @@ Output:
 }
 ```
 
-## Why using jsont?
+## Why use jsont?
 
 The transformation of JSON data is a typical task inside of ETL (Extract, transform, load) processes. Independent of the programing language, these transformations usually result in a lot of boilerplate code: unmarshalling the input JSON on one side to set attributes of a target object and marshalling the latter into JSON again. The code for these transformations can be made much more maintainable, less error-prone and the transformation itself more extendable by giving the surrounding concerns of (un)marshalling into the hands of a library and using a declarative rather than an imperative approach to describe the transformation process. This library tries to define an easily understandable declaration language based on JSON itself, therefore completely staying in the domain of data already working with.
 
