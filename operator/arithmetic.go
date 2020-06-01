@@ -8,10 +8,11 @@ import (
 )
 
 var opAdd = &Operator{
-	Identifier: "add",
-	ArgTypes:   []json.Type{json.Number, json.Number},
-	Sign:       "+",
-	Precedence: 4,
+	Identifier:    "add",
+	ArgTypes:      []json.Type{json.Number, json.Number},
+	Sign:          "+",
+	Associativity: AssocLeft,
+	Precedence:    4,
 	Apply: func(args ...gjson.Result) gjson.Result {
 		res := args[0].Int() + args[1].Int()
 		return gjson.Result{Type: gjson.Number, Num: float64(res)}
@@ -19,10 +20,11 @@ var opAdd = &Operator{
 }
 
 var opSub = &Operator{
-	Identifier: "sub",
-	ArgTypes:   []json.Type{json.Number, json.Number},
-	Sign:       "-",
-	Precedence: 4,
+	Identifier:    "sub",
+	ArgTypes:      []json.Type{json.Number, json.Number},
+	Sign:          "-",
+	Associativity: AssocLeft,
+	Precedence:    4,
 	Apply: func(args ...gjson.Result) gjson.Result {
 		res := args[0].Int() - args[1].Int()
 		return gjson.Result{Type: gjson.Number, Num: float64(res)}
@@ -30,10 +32,11 @@ var opSub = &Operator{
 }
 
 var opMultiply = &Operator{
-	Identifier: "multiply",
-	ArgTypes:   []json.Type{json.Number, json.Number},
-	Sign:       "*",
-	Precedence: 5,
+	Identifier:    "multiply",
+	ArgTypes:      []json.Type{json.Number, json.Number},
+	Sign:          "*",
+	Associativity: AssocLeft,
+	Precedence:    5,
 	Apply: func(args ...gjson.Result) gjson.Result {
 		res := args[0].Num * args[1].Num
 		return gjson.Result{Type: gjson.Number, Num: float64(res)}
@@ -41,10 +44,11 @@ var opMultiply = &Operator{
 }
 
 var opDivide = &Operator{
-	Identifier: "divide",
-	ArgTypes:   []json.Type{json.Number, json.Number},
-	Sign:       "/",
-	Precedence: 5,
+	Identifier:    "divide",
+	ArgTypes:      []json.Type{json.Number, json.Number},
+	Sign:          "/",
+	Associativity: AssocLeft,
+	Precedence:    5,
 	Apply: func(args ...gjson.Result) gjson.Result {
 		res := args[0].Num / args[1].Num
 		return gjson.Result{Type: gjson.Number, Num: float64(res)}
@@ -52,10 +56,11 @@ var opDivide = &Operator{
 }
 
 var opModulo = &Operator{
-	Identifier: "modulo",
-	ArgTypes:   []json.Type{json.Number, json.Number},
-	Sign:       "%",
-	Precedence: 5,
+	Identifier:    "modulo",
+	ArgTypes:      []json.Type{json.Number, json.Number},
+	Sign:          "%",
+	Associativity: AssocLeft,
+	Precedence:    5,
 	Apply: func(args ...gjson.Result) gjson.Result {
 		res := args[0].Int() % args[1].Int()
 		return gjson.Result{Type: gjson.Number, Num: float64(res)}
@@ -63,10 +68,11 @@ var opModulo = &Operator{
 }
 
 var opPow = &Operator{
-	Identifier: "power",
-	ArgTypes:   []json.Type{json.Number, json.Number},
-	Sign:       "^",
-	Precedence: 6,
+	Identifier:    "power",
+	ArgTypes:      []json.Type{json.Number, json.Number},
+	Sign:          "^",
+	Associativity: AssocRight,
+	Precedence:    6,
 	Apply: func(args ...gjson.Result) gjson.Result {
 		res := math.Pow(args[0].Num, args[1].Num)
 		return gjson.Result{Type: gjson.Number, Num: float64(res)}
@@ -74,10 +80,11 @@ var opPow = &Operator{
 }
 
 var opLess = &Operator{
-	Identifier: "less",
-	ArgTypes:   []json.Type{json.Number, json.Number},
-	Sign:       "<",
-	Precedence: 3,
+	Identifier:    "less",
+	ArgTypes:      []json.Type{json.Number, json.Number},
+	Sign:          "<",
+	Associativity: AssocLeft,
+	Precedence:    3,
 	Apply: func(args ...gjson.Result) gjson.Result {
 		res := args[0].Num < args[1].Num
 
@@ -90,10 +97,11 @@ var opLess = &Operator{
 }
 
 var opGreater = &Operator{
-	Identifier: "greater",
-	ArgTypes:   []json.Type{json.Number, json.Number},
-	Sign:       ">",
-	Precedence: 3,
+	Identifier:    "greater",
+	ArgTypes:      []json.Type{json.Number, json.Number},
+	Sign:          ">",
+	Associativity: AssocLeft,
+	Precedence:    3,
 	Apply: func(args ...gjson.Result) gjson.Result {
 		res := args[0].Num > args[1].Num
 
@@ -106,10 +114,11 @@ var opGreater = &Operator{
 }
 
 var opLessEqual = &Operator{
-	Identifier: "lessEqual",
-	ArgTypes:   []json.Type{json.Number, json.Number},
-	Sign:       "<=",
-	Precedence: 3,
+	Identifier:    "lessEqual",
+	ArgTypes:      []json.Type{json.Number, json.Number},
+	Sign:          "<=",
+	Associativity: AssocLeft,
+	Precedence:    3,
 	Apply: func(args ...gjson.Result) gjson.Result {
 		res := args[0].Num <= args[1].Num
 
@@ -122,10 +131,11 @@ var opLessEqual = &Operator{
 }
 
 var opGreaterEqual = &Operator{
-	Identifier: "greaterEqual",
-	ArgTypes:   []json.Type{json.Number, json.Number},
-	Sign:       ">=",
-	Precedence: 3,
+	Identifier:    "greaterEqual",
+	ArgTypes:      []json.Type{json.Number, json.Number},
+	Sign:          ">=",
+	Associativity: AssocLeft,
+	Precedence:    3,
 	Apply: func(args ...gjson.Result) gjson.Result {
 		res := args[0].Num >= args[1].Num
 

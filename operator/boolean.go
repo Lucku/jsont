@@ -6,10 +6,11 @@ import (
 )
 
 var opAnd = &Operator{
-	Identifier: "and",
-	ArgTypes:   []json.Type{json.Bool, json.Bool},
-	Sign:       "&",
-	Precedence: 5,
+	Identifier:    "and",
+	ArgTypes:      []json.Type{json.Bool, json.Bool},
+	Sign:          "&",
+	Associativity: AssocLeft,
+	Precedence:    5,
 	Apply: func(args ...gjson.Result) gjson.Result {
 
 		res := args[0].Bool() && args[1].Bool()
@@ -23,10 +24,11 @@ var opAnd = &Operator{
 }
 
 var opOr = &Operator{
-	Identifier: "or",
-	ArgTypes:   []json.Type{json.Bool, json.Bool},
-	Sign:       "|",
-	Precedence: 4,
+	Identifier:    "or",
+	ArgTypes:      []json.Type{json.Bool, json.Bool},
+	Sign:          "|",
+	Associativity: AssocLeft,
+	Precedence:    4,
 	Apply: func(args ...gjson.Result) gjson.Result {
 
 		res := args[0].Bool() || args[1].Bool()

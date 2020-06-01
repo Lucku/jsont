@@ -6,10 +6,11 @@ import (
 )
 
 var opEqual = &Operator{
-	Identifier: "equal",
-	ArgTypes:   []json.Type{json.Any, json.Any},
-	Sign:       "==",
-	Precedence: 3,
+	Identifier:    "equal",
+	ArgTypes:      []json.Type{json.Any, json.Any},
+	Sign:          "==",
+	Associativity: AssocLeft,
+	Precedence:    3,
 	Apply: func(args ...gjson.Result) gjson.Result {
 
 		res := args[0] == args[1]
@@ -23,10 +24,11 @@ var opEqual = &Operator{
 }
 
 var opNotEqual = &Operator{
-	Identifier: "notEqual",
-	ArgTypes:   []json.Type{json.Any, json.Any},
-	Sign:       "!=",
-	Precedence: 3,
+	Identifier:    "notEqual",
+	ArgTypes:      []json.Type{json.Any, json.Any},
+	Sign:          "!=",
+	Associativity: AssocLeft,
+	Precedence:    3,
 	Apply: func(args ...gjson.Result) gjson.Result {
 
 		res := args[0] != args[1]
@@ -40,10 +42,11 @@ var opNotEqual = &Operator{
 }
 
 var opIfNull = &Operator{
-	Identifier: "ifNull",
-	ArgTypes:   []json.Type{json.Any, json.Any},
-	Sign:       "?",
-	Precedence: 6,
+	Identifier:    "ifNull",
+	ArgTypes:      []json.Type{json.Any, json.Any},
+	Sign:          "?",
+	Associativity: AssocLeft,
+	Precedence:    6,
 	Apply: func(args ...gjson.Result) gjson.Result {
 
 		if json.CheckType(args[0], json.Null) {

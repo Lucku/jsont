@@ -9,6 +9,13 @@ import (
 // as gjson.Result and returning again a gjson.Result
 type ApplierFunc func(...gjson.Result) gjson.Result
 
+const (
+	// AssocLeft is the left associativity
+	AssocLeft = 0
+	// AssocRight is the right associativity
+	AssocRight = 1
+)
+
 // Operator is a function with the given name *Identifier*, that is performed on input values whenever *OperatorSign* is
 // between them (infix). The input arguments of that function have to be of the types specified in *ArgTypes*. The precedence
 // of the operator is defined in the corresponding attribute, with 1 being the lowest precedence (usually the select operator).
@@ -17,11 +24,12 @@ type ApplierFunc func(...gjson.Result) gjson.Result
 // The types of input arguments is checked before calling the function thus it can be assumed without further type checking
 // that input arguments to the ApplierFunc are of the necessary types.
 type Operator struct {
-	Identifier string
-	Sign       string
-	Precedence int
-	ArgTypes   []json.Type
-	Apply      ApplierFunc
+	Identifier    string
+	Sign          string
+	Associativity int
+	Precedence    int
+	ArgTypes      []json.Type
+	Apply         ApplierFunc
 }
 
 // OperandTypeError is an error that indicates a wrong type of input variable given into an operation

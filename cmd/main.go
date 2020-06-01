@@ -4,14 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-
-	"github.com/lucku/jsont/cmd"
-)
-
-var (
-	timestamp  string
-	version    string
-	commitHash string
 )
 
 type runner interface {
@@ -28,8 +20,8 @@ func execute(args []string) error {
 	}
 
 	cmds := []runner{
-		cmd.NewTransformCmd(),
-		cmd.NewVersionCmd(),
+		NewTransformCmd(),
+		NewVersionCmd(),
 	}
 
 	subcommand := os.Args[1]

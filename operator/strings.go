@@ -8,10 +8,11 @@ import (
 )
 
 var opConcat = &Operator{
-	Identifier: "concat",
-	ArgTypes:   []json.Type{json.String, json.String},
-	Sign:       ":",
-	Precedence: 1,
+	Identifier:    "concat",
+	ArgTypes:      []json.Type{json.String, json.String},
+	Sign:          ":",
+	Associativity: AssocLeft,
+	Precedence:    1,
 	Apply: func(args ...gjson.Result) gjson.Result {
 		sb := strings.Builder{}
 		sb.WriteString(args[0].String())

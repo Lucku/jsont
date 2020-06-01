@@ -1,4 +1,4 @@
-package transform
+package jsont
 
 import (
 	"fmt"
@@ -81,11 +81,13 @@ func (s typeSafeStack) String() string {
 	for i, elem := range s.contents {
 
 		if i == len(s.contents)-1 {
-			sb.WriteString(fmt.Sprintf("%v]", elem))
+			sb.WriteString(fmt.Sprintf("%v", elem))
 		} else {
 			sb.WriteString(fmt.Sprintf("%v ", elem))
 		}
 	}
+
+	sb.WriteString("]")
 
 	return sb.String()
 }

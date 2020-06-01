@@ -1,4 +1,4 @@
-package cmd
+package main
 
 import (
 	"errors"
@@ -7,9 +7,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/lucku/jsont/transform"
+	"github.com/lucku/jsont"
 )
 
+// TransformCmd transforms an input JSON using a transformation description
 type TransformCmd struct {
 	fs        *flag.FlagSet
 	inFiles   []string
@@ -17,10 +18,12 @@ type TransformCmd struct {
 	transFile string
 }
 
+// Name returns the name of the transform subcommand
 func (t *TransformCmd) Name() string {
 	return t.fs.Name()
 }
 
+// Init initializes the transform subcommand
 func (t *TransformCmd) Init(args []string) error {
 
 	if err := t.fs.Parse(args); err != nil {
@@ -40,9 +43,10 @@ func (t *TransformCmd) Init(args []string) error {
 	return nil
 }
 
+// Run executes the transform subcommand
 func (t *TransformCmd) Run() error {
 
-	jt, err := transform.NewJSONTransformerWithFile(t.transFile)
+	jt, err := jsont.NewJSONTransformerWithFile(t.transFile)
 
 	if err != nil {
 		return err
@@ -70,10 +74,12 @@ func (t *TransformCmd) Run() error {
 	return nil
 }
 
+// PrintUsage returns a description of the transform command's usage
 func (t *TransformCmd) PrintUsage() {
 	t.fs.PrintDefaults()
 }
 
+// NewTransformCmd returns an instance of a transform subcommand
 func NewTransformCmd() *TransformCmd {
 
 	tc := &TransformCmd{

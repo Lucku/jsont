@@ -1,10 +1,12 @@
-package transform
+package jsont
 
 const (
 	_defIndexLeaves = true
 	_defValidate    = true
 )
 
+// Option is a configuration option of the JSONTransformer and forms part of the functional options pattern
+// described, e.g., in the Uber Go Style Guide: https://github.com/uber-go/guide/blob/master/style.md#functional-options
 type Option interface {
 	apply(opts *options)
 }
@@ -27,11 +29,11 @@ func (v validateOption) apply(opts *options) {
 	opts.validate = true
 }
 
-func WithIndexLeaves(i bool) Option {
+func withIndexLeaves(i bool) Option {
 	return indexLeavesOption(i)
 }
 
-func WithValidate(v bool) Option {
+func withValidate(v bool) Option {
 	return validateOption(v)
 }
 

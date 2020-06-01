@@ -53,13 +53,17 @@ Output:
 }
 ```
 
+## Why using jsont?
+
+The transformation of JSON data is a typical task inside of ETL (Extract, transform, load) processes. Independent of the programing language, these transformations usually result in a lot of boilerplate code: unmarshalling the input JSON on one side to set attributes of a target object and marshalling the latter into JSON again. The code for these transformations can be made much more maintainable, less error-prone and the transformation itself more extendable by giving the surrounding concerns of (un)marshalling into the hands of a library and using a declarative rather than an imperative approach to describe the transformation process. This library tries to define an easily understandable declaration language based on JSON itself, therefore completely staying in the domain of data already working with.
+
 ## Installation
 
 ### Using go get
 
 Install using `go get`:
 
-```
+```bash
 $ go get github.com/lucku/jsont
 ```
 
@@ -86,7 +90,7 @@ $ jsont transform -t testdata/trans1.json -o testdata testdata/input1.json
 ### Code
 
 ```go
-jt, err := transform.NewJSONTransformerWithFile("testdata/trans1.json")
+jt, err := jsont.NewJSONTransformerWithFile("testdata/trans1.json")
 
 if err != nil {
     return err
@@ -143,7 +147,7 @@ output:
 ## ToDos
 
 - [x] Extend the magefile to include version information in binary
-- [ ] Provide all GoDoc comments
+- [x] Provide all GoDoc comments
 - [ ] Write a full-fledged CLI
 - [ ] Support for unary operators like negation
 - [ ] Support for same operator on different data types

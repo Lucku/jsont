@@ -1,5 +1,7 @@
 // +build mage
 
+// jsont: A high performance Go library to transform JSON data using simple and easily understandable instructions
+// written in JSON.
 package main
 
 import (
@@ -16,12 +18,12 @@ import (
 // Default target to run when none is specified
 var Default = Build
 
-var modulePath = "github.com/lucku/jsont"
+var modulePath = "github.com/lucku/jsont/cmd"
 var name = "jsont"
 
 var ldflags = `-s -w -X "main.timestamp=$TIMESTAMP" -X "main.commitHash=$COMMIT_HASH" -X "main.version=$VERSION"`
 
-// Build the application
+// Builds the application
 func Build() error {
 	mg.Deps(InstallDeps)
 	fmt.Println("Building...")
@@ -32,31 +34,31 @@ func Build() error {
 	return sh.RunWith(envParams(), "go", "build", "-ldflags", ldflags, "-o", name, modulePath)
 }
 
-// Install the application
+//Installs the application
 func Install() error {
 	fmt.Println("Installing...")
 	return sh.RunWith(envParams(), "go", "install", "-ldflags", ldflags, modulePath)
 }
 
-// InstallDeps installs all application's dependencies
+// Installs all application's dependencies
 func InstallDeps() error {
-	fmt.Println("Installing Deps...")
+	fmt.Println("Installing Dependencies...")
 	return sh.RunV("go", "get", "-u", "./...")
 }
 
-// Test the application
+// Performs all tests on the application
 func Test() error {
 	fmt.Println("Running tests...")
 	return sh.RunV("go", "test", "./...")
 }
 
-// Clean up after yourself
+// Cleans up all build artifacts in the project root dir
 func Clean() {
 	fmt.Println("Cleaning...")
 	os.RemoveAll(name)
 }
 
-// Release the application
+// Releases the application using goreleaser
 func Release() (err error) {
 	fmt.Println("Releasing...")
 	if os.Getenv("TAG") == "" {

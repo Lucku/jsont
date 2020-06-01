@@ -1,4 +1,4 @@
-package transform
+package jsont
 
 import (
 	"fmt"
@@ -11,22 +11,22 @@ import (
 	"github.com/tidwall/gjson"
 )
 
+// ExpressionEvaluator are low level APIs for the evaluation of expressions provided by the user inside the JSON
+// transformation.
 type ExpressionEvaluator interface {
 	EvaluateExpression(expr string) (*gjson.Result, error)
 }
 
 type expressionEvaluator struct {
-	inputData  gjson.Result
-	operands   Stack
-	operators  Stack
-	qualifiers Stack
+	inputData gjson.Result
+	operands  Stack
+	operators Stack
 }
 
 func newExpressionEvaluator(inputData gjson.Result) ExpressionEvaluator {
 	operands := newTypeSafeStack(0)
 	operators := newTypeSafeStack(0)
-	qualifiers := newTypeSafeStack(0)
-	return &expressionEvaluator{inputData: inputData, operands: operands, operators: operators, qualifiers: qualifiers}
+	return &expressionEvaluator{inputData: inputData, operands: operands, operators: operators}
 }
 
 const _qualifierIndicator = "$"
@@ -44,18 +44,17 @@ Scan:
 	for {
 
 		_, tok, lit := s.Scan()
-
+		fmt.Println(tok, lit)
 		switch {
 		case tok == token.EOF:
 			break Scan
 		case isOperator(tok.String()):
 			if readingQualifier {
-				e.qualifiers.Push(currentQualifier)
+				e.evalQualifier(currentQualifier)
 				currentQualifier = ""
 				readingQualifier = false
 			}
-			e.evalAllQualifiers()
-			e.evalAllLowerOperators(tok.String())
+			e.evalPrecedentOperators(tok.String())
 		case tok == token.PERIOD:
 			// we have a select operation here: check if last token was an operand
 			if !readingQualifier || prevTok == token.ILLEGAL {
@@ -65,7 +64,7 @@ Scan:
 			e.operators.Push(tok.String())
 		case tok == token.RPAREN:
 			if readingQualifier {
-				e.qualifiers.Push(currentQualifier)
+				e.evalQualifier(currentQualifier)
 				currentQualifier = ""
 				readingQualifier = false
 			}
@@ -75,7 +74,7 @@ Scan:
 				}
 			}
 
-			// pop closing parenthesis
+			// pop opening parenthesis
 			if e.operators.Pop().(string) != "(" {
 				return nil, fmt.Errorf("no matching parenthesis found")
 			}
@@ -91,7 +90,7 @@ Scan:
 			e.operands.Push(jsonFalse)
 		case tok == token.SEMICOLON: // semicolon is automatically added at the end by the scanner, can be used to push last qualifier
 			if readingQualifier {
-				e.qualifiers.Push(currentQualifier)
+				e.evalQualifier(currentQualifier)
 			}
 		case lit == _qualifierIndicator:
 			if readingQualifier {
@@ -111,8 +110,6 @@ Scan:
 		prevTok = tok
 		prevLit = lit
 	}
-
-	e.evalAllQualifiers()
 
 	for e.operators.Size() > 0 {
 
@@ -143,7 +140,7 @@ func isOperator(lit string) bool {
 	return operator.IsOperator(lit)
 }
 
-func (e *expressionEvaluator) evalAllLowerOperators(op string) {
+func (e *expressionEvaluator) evalPrecedentOperators(op string) {
 
 	parsedOp := operator.GetOperator(op)
 
@@ -157,7 +154,15 @@ func (e *expressionEvaluator) evalAllLowerOperators(op string) {
 			break
 		}
 
-		if parsedOp.Precedence >= nextOpParsed.Precedence {
+		// break means right operation has to come first
+		if parsedOp.Associativity == operator.AssocRight {
+			if parsedOp.Precedence >= nextOpParsed.Precedence {
+				break
+			}
+		}
+
+		// left operation has to be strictly higher so that right one comes first
+		if parsedOp.Precedence > nextOpParsed.Precedence {
 			break
 		}
 
@@ -167,17 +172,15 @@ func (e *expressionEvaluator) evalAllLowerOperators(op string) {
 	e.operators.Push(op)
 }
 
-func (e *expressionEvaluator) evalAllQualifiers() {
-
-	for e.qualifiers.Size() > 0 {
-		q := e.qualifiers.Pop().(string)
-		val := e.inputData.Get(q)
-
-		e.operands.Push(val)
-	}
+func (e *expressionEvaluator) evalQualifier(qualifier string) {
+	val := e.inputData.Get(qualifier)
+	e.operands.Push(val)
 }
 
 func (e *expressionEvaluator) evalOperation() error {
+
+	fmt.Println(e.operands)
+	fmt.Println(e.operators)
 
 	op := e.operators.Pop().(string)
 
