@@ -26,8 +26,9 @@ jobs:
       - run:
           name: "Fetch Go dependencies"
           command: |
-            go mod download
+            go get github.com/magefile/mage
             go get github.com/jstemmer/go-junit-report
+            mage deps
 
       - run:
           name: "Run golint"
@@ -43,8 +44,8 @@ jobs:
       - run:
           name: "Run unit tests"
           command: |
-            trap "go-junit-report" <${TEST_RESULTS}/go-test.out > <${TEST_RESULTS}/go-test-report.xml EXIT
-            go test -v -race ./... | tee ${TEST_RESULTS}/go-test.out
+            trap "go-junit-report <${TEST_RESULTS}/go-test.out > ${TEST_RESULTS}/go-test-report.xml" EXIT
+            mage test | tee ${TEST_RESULTS}/go-test.out
 
       - save_cache:
           key: v1-pkg-cache
