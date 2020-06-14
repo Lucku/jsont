@@ -1,11 +1,16 @@
 # jsont
+[![Go Report Card](https://goreportcard.com/badge/github.com/lucku/jsont)](https://goreportcard.com/report/github.com/lucku/jsont)
 [![GoDoc](https://godoc.org/github.com/lucku/jsont?status.svg)](https://godoc.org/github.com/lucku/jsont)
+[![CircleCI](https://circleci.com/gh/lucku/jsont.svg?style=shield)](https://circleci.com/gh/lucku/jsont)
+[![TODOs](https://badgen.net/https/api.tickgit.com/badgen/github.com/lucku/jsont)](https://www.tickgit.com/browse?repo=github.com/lucku/jsont)
+[![CircleCI](https://circleci.com/gh/lucku/jsont.svg?style=shield)](https://circleci.com/gh/lucku/jsont)
+[![License MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://img.shields.io/badge/License-MIT-brightgreen.svg)
 
 Transform JSON data using .. JSON
 
 A high performance Go library to transform JSON data using simple and easily understandable instructions written in JSON.
 
-The transformation is performed by providing a JSON of the desired structure, but having substitution statements as leaf-level values, provided as strings. They include selectors to the input JSON's fields and further allow for operations between various
+The transformation is performed by providing a JSON of the desired structure, but having substitution statements as leaf-level values, provided as strings. They include selectors to the input JSON document's fields and further allow for operations between various
 input fields. The value of an input JSON field could simply be put under a new key in the desired JSON, or be part of an operation together with other input fields.
 
 ## Example

@@ -18,6 +18,10 @@ import (
 // Default target to run when none is specified
 var Default = Build
 
+var Aliases = map[string]interface{}{
+	"deps": InstallDeps,
+}
+
 var modulePath = "github.com/lucku/jsont/cmd"
 var name = "jsont"
 
@@ -43,13 +47,13 @@ func Install() error {
 // Installs all application's dependencies
 func InstallDeps() error {
 	fmt.Println("Installing Dependencies...")
-	return sh.RunV("go", "get", "-u", "./...")
+	return sh.RunV("go", "mod", "download")
 }
 
 // Performs all tests on the application
 func Test() error {
 	fmt.Println("Running tests...")
-	return sh.RunV("go", "test", "./...")
+	return sh.RunV("go", "test", "-race", "-v", "./...")
 }
 
 // Cleans up all build artifacts in the project root dir

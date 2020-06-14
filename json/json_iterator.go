@@ -6,11 +6,14 @@ import (
 	"github.com/tidwall/gjson"
 )
 
+// Iterator allows to traverse a tree data structure
 type Iterator interface {
 	Next() bool
 	Value() *PathElem
 }
 
+// PathElem is an element inside a JSON tree, identified by a JSON value and a path inside the
+// overall JSON document
 type PathElem struct {
 	curMap []*kvPair
 	curArr []gjson.Result
@@ -32,6 +35,7 @@ type kvPair struct {
 	v gjson.Result
 }
 
+// NewIterator initializes an iterator to a JSON document taken as input
 func NewIterator(data *gjson.Result) Iterator {
 	return &iterator{Data: data}
 }
