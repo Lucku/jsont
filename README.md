@@ -1,9 +1,9 @@
 # jsont
+[![License MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://img.shields.io/badge/License-MIT-brightgreen.svg)
 [![Go Report Card](https://goreportcard.com/badge/github.com/lucku/jsont)](https://goreportcard.com/report/github.com/lucku/jsont)
 [![GoDoc](https://godoc.org/github.com/lucku/jsont?status.svg)](https://godoc.org/github.com/lucku/jsont)
-[![CircleCI](https://circleci.com/gh/lucku/jsont.svg?style=shield)](https://circleci.com/gh/lucku/jsont)
+[![CircleCI](https://circleci.com/gh/Lucku/jsont.svg?style=shield)](https://circleci.com/gh/Lucku/jsont)
 [![TODOs](https://badgen.net/https/api.tickgit.com/badgen/github.com/lucku/jsont)](https://www.tickgit.com/browse?repo=github.com/lucku/jsont)
-[![License MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://img.shields.io/badge/License-MIT-brightgreen.svg)
 
 Transform JSON data using .. JSON
 
