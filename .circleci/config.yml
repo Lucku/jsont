@@ -6,7 +6,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: cimg/go:latest
+      - image: circleci/golang:latest
 
     environment:
       GO111MODULE: "on"
