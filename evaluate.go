@@ -1,6 +1,7 @@
 package jsont
 
 import (
+	"errors"
 	"fmt"
 	"go/scanner"
 	"go/token"
@@ -10,6 +11,15 @@ import (
 	"github.com/lucku/jsont/operator"
 	"github.com/tidwall/gjson"
 )
+
+var (
+	errMissingLeftParenthesis  = errors.New("no matching left parenthesis found")
+	errMissingRightParenthesis = errors.New("no matching right parenthesis found")
+	errIllegalQualifierSign    = errors.New("illegal \"$\" inside of qualifier")
+	errIllegalPathSeparator    = errors.New("not able to parse instruction: path separator (.) without preceding qualifier")
+)
+
+const qualifierIndicator = "$"
 
 // ExpressionEvaluator are low level APIs for the evaluation of expressions provided by the user inside the JSON
 // transformation.
@@ -28,8 +38,6 @@ func newExpressionEvaluator(inputData gjson.Result) ExpressionEvaluator {
 	operators := newTypeSafeStack(0)
 	return &expressionEvaluator{inputData: inputData, operands: operands, operators: operators}
 }
-
-const _qualifierIndicator = "$"
 
 func (e *expressionEvaluator) EvaluateExpression(expr string) (*gjson.Result, error) {
 
@@ -58,7 +66,7 @@ Scan:
 		case tok == token.PERIOD:
 			// we have a select operation here: check if last token was an operand
 			if !readingQualifier || prevTok == token.ILLEGAL {
-				return nil, fmt.Errorf("not able to parse instruction: path separator (.) without preceding qualifier")
+				return nil, errIllegalPathSeparator
 			}
 		case tok == token.LPAREN:
 			e.operators.Push(tok.String())
@@ -75,8 +83,8 @@ Scan:
 			}
 
 			// pop opening parenthesis
-			if e.operators.Pop().(string) != "(" {
-				return nil, fmt.Errorf("no matching parenthesis found")
+			if e.operators.Size() == 0 || e.operators.Pop().(string) != "(" {
+				return nil, errMissingLeftParenthesis
 			}
 		case tok == token.FLOAT, tok == token.INT:
 			rawNum, _ := strconv.ParseFloat(lit, 64)
@@ -92,12 +100,12 @@ Scan:
 			if readingQualifier {
 				e.evalQualifier(currentQualifier)
 			}
-		case lit == _qualifierIndicator:
+		case lit == qualifierIndicator:
 			if readingQualifier {
-				return nil, fmt.Errorf("illegal \"$\" inside of qualifier")
+				return nil, errIllegalQualifierSign
 			}
 			readingQualifier = true
-		case prevLit == _qualifierIndicator, prevTok == token.PERIOD: // path segment of qualifier
+		case prevLit == qualifierIndicator, prevTok == token.PERIOD: // path segment of qualifier
 			if currentQualifier != "" {
 				currentQualifier += "."
 			}
@@ -112,6 +120,13 @@ Scan:
 	}
 
 	for e.operators.Size() > 0 {
+
+		// check if there is really a valid operator coming or a bracket
+		if e.operators.Peek() == "(" {
+			// TODO Reset all operators and operands on new executions of EvaluateExpression
+			e.operators.Pop()
+			return nil, errMissingRightParenthesis
+		}
 
 		if err := e.evalOperation(); err != nil {
 			return nil, err
